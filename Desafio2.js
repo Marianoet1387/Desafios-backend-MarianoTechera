@@ -10,47 +10,56 @@ class ProductManager {
         if (!title || !description || !price || !thumbnail || !code || !stock) {
             throw new Error('Todos los campos son obligatorios.');
         }
-        // falta condicional para que no se repita.
         const products = await getJSONFromFile(this.path);
-        const id = this.creoID()
-        const newProduct = { id, title, description, price, thumbnail, code, stock };
-        products.push(newProduct);
-        await saveJSONToFile(this.path, products);
+        if (products.some((p) => p.code === code)) {
+            console.log(`Ya se encuetra agregado el code: ${code}`)
+        } else {
+            const id = this.creoID()
+            const newProduct = { id, title, description, price, thumbnail, code, stock };
+            products.push(newProduct);
+            await saveJSONToFile(this.path, products);
+        }
     }
 
     creoID = () => parseInt(Math.random() * 100000)
     
-    getProdcuts() {
-        return getJSONFromFile(this.path);
-    }
+    getProducts = () =>  getJSONFromFile(this.path)
     
-    getProdcutById(id) { 
-        //  error Cannot read properties of undefined (reading 'find') 
-        let product = this.products.find(p => p.id === id)
-        if (!product) {
+    deleteProductsFile = () =>  deleteToFile(this.path)
+
+    async deleteProduct(id){
+        const products = await getJSONFromFile(this.path);
+        let index = products.findIndex((producto) => producto.id === id)
+        if (index  > -1 ){
+            products.splice(index, 1)
+            await saveJSONToFile(this.path, products);
+            console.log("se ha borrado correctamente el producto ")
+        } 
+        return products
+    }
+
+    async getProdcutById(id) { 
+        const products = await getJSONFromFile(this.path);
+        let productById = products.find(p => p.id === id)
+        if (!productById) {
             console.log("Product not found")
         } else {
-            console.log("product found", product)
+            console.log("Product found", productById)
         }
     }
 
-    deleteProduct = async ()=> {
-        try {
-            console.log('Intentando borrar el archivo...')
-            await fs.unlink('./products.json') 
-            console.log('Finalizó el borrado del archivo.')
-        } catch (error) {
-            console.log('No se pudo  borrar el archivo.')
-        }      
-    }   
-    updateProduct = async (id)=> {
-        const updateProduct = {title, description, price, thumbnail, code, stock };
-        console.log('🚀 Iniciando la actualizacion...')
-        await fs.promises.writeFile('./text-output-file.txt',updateProduct , 'utf-8')
-        console.log('😎 Finalizó la actualizacion')
+    async updateProduct(id) {
+      const products = await getJSONFromFile(this.path);
+      let updateProd = products.find(p => p.id === id)
+      if (!updateProd) {
+        console.log("Product not found")
+    } else {
+        console.log("update Product", updateProd)
+      
     }
-
+   }
 }
+
 const getJSONFromFile = async (path) => {
     try {
         await fs.access(path);
@@ -65,7 +74,6 @@ const getJSONFromFile = async (path) => {
     }
 }
 
-
 const saveJSONToFile = async (path, data) => {
     const content = JSON.stringify(data, null, '\t'); 
     try {
@@ -74,6 +82,29 @@ const saveJSONToFile = async (path, data) => {
         throw new Error(`El archivo ${path} no pudo ser escrito.`);
     }
 }  
+
+const updateToFile = async () => {
+    try {
+        updateProduct =  { 
+         title : "nuevo title", description, price, thumbnail, code, stock };
+        console.log('🚀 Iniciando la actualizacion...')
+        await fs.appendFile('./products.json', updateProduct, 'utf-8')
+        console.log('😎 Finalizó la actualizacion')
+    } catch (error) {
+        throw new Error(`El archivo  no pudo ser actualizar.`);
+    }
+
+}
+
+const deleteToFile = async (path)=> {
+    try {
+        console.log('Intentando borrar el archivo...')
+        await fs.unlink('./products.json') 
+        console.log('Finalizó el borrado del archivo.')
+    } catch (error) {
+        throw new Error(`El archivo ${path} no pudo ser borrado.`);
+    }      
+}   
 
 const desafio = async () => {
     try {
@@ -86,12 +117,15 @@ const desafio = async () => {
         code: "abc123",
         stock: 25
       });
-      const products = await productManager.getProdcuts();
-      console.log('😎 Acá los productos:', products);
-      //productManager.getProdcutById(1)
-      //productManager.deleteProduct()
+
+      const products = await productManager.getProducts();
+      console.log("getProdcuts",'Acá los productos:', products);
+      productManager.getProdcutById(10955)
+      //productManager.deleteProduct(10955) 
+     // productManager.updateProduct(10955)
+      //productManager.deleteProductsFile()
     } catch (error) {
-      console.error('😱 Ha ocurrido un error', error.message);
+      console.error(' Ha ocurrido un error: ', error.message);
     }
   };
   desafio()
