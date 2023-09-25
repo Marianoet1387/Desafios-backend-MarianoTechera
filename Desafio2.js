@@ -29,13 +29,15 @@ class ProductManager {
 
     async deleteProduct(id){
         const products = await getJSONFromFile(this.path);
-        let index = products.findIndex((producto) => producto.id === id)
+        let index = products.findIndex((p) => p.id === id)
         if (index  > -1 ){
             products.splice(index, 1)
             await saveJSONToFile(this.path, products);
-            console.log("se ha borrado correctamente el producto ")
-        } 
-        return products
+            console.log("Se ha borrado correctamente el producto ")
+        } else{
+            console.log('No se ha podido borrar el producto');
+        }
+        
     }
 
     async getProdcutById(id) { 
@@ -47,17 +49,24 @@ class ProductManager {
             console.log("Product found", productById)
         }
     }
-
-    async updateProduct(id) {
-      const products = await getJSONFromFile(this.path);
-      let updateProd = products.find(p => p.id === id)
-      if (!updateProd) {
-        console.log("Product not found")
-    } else {
-        console.log("update Product", updateProd)
-      
+    
+    async updateProduct(id, newTitle, newDescription, newPrice, newThumbnail, newCode, newStock) {
+        const getProducts = await getJSONFromFile(this.path);
+        let filterProd = getProducts.filter(p => p.id === id)
+        if (!filterProd) {
+            console.log("updateProduct : Product not found")
+        } else {
+            if(!id){
+                throw new Error('id incorrecto');
+            }else{
+                 let products = { id:id, title: newTitle, description: newDescription, price: newPrice, thumbnail: newThumbnail, code: newCode, stock: newStock }
+                await saveJSONToFile(this.path, products);
+                console.log("Producto actualizado correctamente") 
+            }           
+                          
+        }
     }
-   }
+    
 }
 
 const getJSONFromFile = async (path) => {
@@ -83,19 +92,6 @@ const saveJSONToFile = async (path, data) => {
     }
 }  
 
-const updateToFile = async () => {
-    try {
-        updateProduct =  { 
-         title : "nuevo title", description, price, thumbnail, code, stock };
-        console.log('🚀 Iniciando la actualizacion...')
-        await fs.appendFile('./products.json', updateProduct, 'utf-8')
-        console.log('😎 Finalizó la actualizacion')
-    } catch (error) {
-        throw new Error(`El archivo  no pudo ser actualizar.`);
-    }
-
-}
-
 const deleteToFile = async (path)=> {
     try {
         console.log('Intentando borrar el archivo...')
@@ -108,25 +104,24 @@ const deleteToFile = async (path)=> {
 
 const desafio = async () => {
     try {
-      const productManager = new ProductManager("./products.json");
-      await productManager.addProduct({
-        title: "producto prueba",
-        description: "Este es un producto prueba",
-        price: 200,
-        thumbnail: "sin imagen",
-        code: "abc123",
-        stock: 25
-      });
-
-      const products = await productManager.getProducts();
-      console.log("getProdcuts",'Acá los productos:', products);
-      productManager.getProdcutById(10955)
-      //productManager.deleteProduct(10955) 
-     // productManager.updateProduct(10955)
-      //productManager.deleteProductsFile()
+        const productManager = new ProductManager("./products.json");
+        await productManager.addProduct({
+            title: "producto prueba",
+            description: "Este es un producto prueba",
+            price: 200,
+            thumbnail: "sin imagen",
+            code: "abc123",
+            stock: 25
+        });
+        const products = await productManager.getProducts();
+        console.log("getProdcuts", 'Acá los productos:', products);
+        productManager.getProdcutById()
+        productManager.deleteProduct() 
+        //await productManager.updateProduct(25650, "Actualizado", "Actualizado", 300, "Actualizado", "Actualizado", 10)
+        //productManager.deleteProductsFile()
     } catch (error) {
-      console.error(' Ha ocurrido un error: ', error.message);
+        console.error(' Ha ocurrido un error: ', error.message);
     }
-  };
-  desafio()
+};
+desafio()
   
