@@ -42,7 +42,7 @@ class ProductManager {
 
     async getProdcutById(id) { 
         const products = await getJSONFromFile(this.path);
-        let productById = products.find(p => p.id === id)
+        let productById = products.some(p => p.id === id)
         if (!productById) {
             console.log("Product not found")
         } else {
@@ -52,21 +52,15 @@ class ProductManager {
     
     async updateProduct(id, newTitle, newDescription, newPrice, newThumbnail, newCode, newStock) {
         const getProducts = await getJSONFromFile(this.path);
-        let filterProd = getProducts.filter(p => p.id === id)
-        if (!filterProd) {
-            console.log("updateProduct : Product not found")
-        } else {
-            if(!id){
-                throw new Error('id incorrecto');
-            }else{
-                 let products = { id:id, title: newTitle, description: newDescription, price: newPrice, thumbnail: newThumbnail, code: newCode, stock: newStock }
+        let ProdId = getProducts.some(p => p.id === id)
+        if (!ProdId) {
+            console.log(`updateProduct: Product not foun, id: ${id}`)
+        } else { 
+                const products = { id:id, title: newTitle, description: newDescription, price: newPrice, thumbnail: newThumbnail, code: newCode, stock: newStock }
                 await saveJSONToFile(this.path, products);
-                console.log("Producto actualizado correctamente") 
-            }           
-                          
+                console.log("Producto actualizado correctamente", products)                      
         }
     }
-    
 }
 
 const getJSONFromFile = async (path) => {
@@ -117,7 +111,7 @@ const desafio = async () => {
         console.log("getProdcuts", 'Acá los productos:', products);
         productManager.getProdcutById()
         productManager.deleteProduct() 
-        //await productManager.updateProduct(25650, "Actualizado", "Actualizado", 300, "Actualizado", "Actualizado", 10)
+        await productManager.updateProduct(74739, "Actualizado", "Actualizado", 300, "Actualizado", "Actualizado", 10)
         //productManager.deleteProductsFile()
     } catch (error) {
         console.error(' Ha ocurrido un error: ', error.message);
