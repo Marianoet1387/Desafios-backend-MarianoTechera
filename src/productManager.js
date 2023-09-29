@@ -25,7 +25,7 @@ class ProductManager {
     
     getProducts = () =>  getJSONFromFile(this.path)
     
-    deleteProductsFile = () =>  deleteToFile(this.path)
+    deleteProductsFile = () =>  deleteJSONToFile(this.path)
 
     async deleteProduct(id){
         const products = await getJSONFromFile(this.path);
@@ -86,7 +86,7 @@ const saveJSONToFile = async (path, data) => {
     }
 }  
 
-const deleteToFile = async (path)=> {
+const deleteJSONToFile = async (path)=> {
     try {
         console.log('Intentando borrar el archivo...')
         await fs.unlink('./products.json') 
@@ -95,6 +95,19 @@ const deleteToFile = async (path)=> {
         throw new Error(`El archivo ${path} no pudo ser borrado.`);
     }      
 }   
+
+/*
+module.exports = { RECORDAR BORRAR
+    saveFile,
+    getFile,
+    writeFile,
+    promises: {
+      saveFile: saveJSONToFile,
+      getFile: getJSONFromFile,
+      deleteToFile: deleteJSONToFile
+    }
+  };
+*/
 
 const desafio = async () => {
     try {
@@ -109,13 +122,13 @@ const desafio = async () => {
         });
         const products = await productManager.getProducts();
         console.log("getProdcuts", 'Acá los productos:', products);
-        productManager.getProdcutById()
-        productManager.deleteProduct() 
-        await productManager.updateProduct(74739, "Actualizado", "Actualizado", 300, "Actualizado", "Actualizado", 10)
+        //productManager.getProdcutById()
+        //productManager.deleteProduct() 
+        //await productManager.updateProduct(74739, "Actualizado", "Actualizado", 300, "Actualizado", "Actualizado", 10)
         //productManager.deleteProductsFile()
     } catch (error) {
         console.error(' Ha ocurrido un error: ', error.message);
     }
 };
 desafio()
-  
+
