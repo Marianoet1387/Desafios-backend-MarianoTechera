@@ -96,19 +96,6 @@ const deleteJSONToFile = async (path)=> {
     }      
 }   
 
-/*
-module.exports = { RECORDAR BORRAR
-    saveFile,
-    getFile,
-    writeFile,
-    promises: {
-      saveFile: saveJSONToFile,
-      getFile: getJSONFromFile,
-      deleteToFile: deleteJSONToFile
-    }
-  };
-*/
-
 const desafio = async () => {
     try {
         const productManager = new ProductManager("./products.json");
