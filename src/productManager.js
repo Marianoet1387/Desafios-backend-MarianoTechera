@@ -40,7 +40,7 @@ class ProductManager {
         
     }
 
-    async getProdcutById(id) { 
+     async getProdcutById(id) { 
         const products = await getJSONFromFile(this.path);
         let productById = products.some(p => p.id === id)
         if (!productById) {
@@ -63,7 +63,7 @@ class ProductManager {
     }
 }
 
-const getJSONFromFile = async (path) => {
+ const getJSONFromFile = async (path) => {
     try {
         await fs.access(path);
     } catch (error) {
@@ -77,7 +77,7 @@ const getJSONFromFile = async (path) => {
     }
 }
 
-const saveJSONToFile = async (path, data) => {
+ const saveJSONToFile = async (path, data) => {
     const content = JSON.stringify(data, null, '\t'); 
     try {
         await fs.writeFile(path, content, 'utf-8');
@@ -86,7 +86,7 @@ const saveJSONToFile = async (path, data) => {
     }
 }  
 
-const deleteJSONToFile = async (path)=> {
+ const deleteJSONToFile = async (path)=> {
     try {
         console.log('Intentando borrar el archivo...')
         await fs.unlink('./products.json') 
@@ -96,17 +96,19 @@ const deleteJSONToFile = async (path)=> {
     }      
 }   
 
+module.exports = ProductManager
+
 const desafio = async () => {
     try {
         const productManager = new ProductManager("./products.json");
-        await productManager.addProduct({
+        /*await productManager.addProduct({
             title: "producto prueba",
             description: "Este es un producto prueba",
             price: 200,
             thumbnail: "sin imagen",
             code: "abc123",
             stock: 25
-        });
+        });*/
         const products = await productManager.getProducts();
         console.log("getProdcuts", 'Acá los productos:', products);
         //productManager.getProdcutById()
