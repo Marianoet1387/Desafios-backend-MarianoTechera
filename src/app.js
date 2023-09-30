@@ -10,8 +10,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get("/products", (req, res) => {  
     const {limit} = req.query
-    if (limit <5) {
-        prod = products.filter(p=>p.id === limit)
+    const isLimit = limit && (limit <= 5)
+    if (isLimit) {
+        prod = products.filter(p=>p.limit === limit)
         res.send({prod}) 
     }else{
         res.send({products})
