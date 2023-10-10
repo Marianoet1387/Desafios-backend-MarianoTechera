@@ -1,4 +1,4 @@
-const { promises: fs } = require("fs");
+import {promises as fs} from "fs"
 
 class ProductManager {
     constructor(path) {
@@ -7,12 +7,12 @@ class ProductManager {
 
     async addProduct(product) {
         const products = await this.getProducts();
-        const { title, description, price, thumbnail, code, stock } = product;
-        if (!title || !description || !price || !thumbnail || !code || !stock) {
+        const { title, description, price, thumbnail, code, stock, status } = product;
+        if (!title || !description || !price || !code || !stock || !status) {
             throw new Error("Todos los campos son obligatorios.");
         }
-        const id = this.creoID();
-        const newProduct = { id, title, description, price, thumbnail, code, stock };
+        const id = this.creoID();   
+        const newProduct = { id, title, description, price, thumbnail, code, stock, status };
         products.push(newProduct);
         await this.saveProductsToFile(products);
     }
@@ -30,9 +30,9 @@ class ProductManager {
         const products = await this.getProducts();
         const product = products.find((p) => p.id === id);
         if (!product) {
-            console.log("Product not found");
+            throw new Error("Producto no encontrado");
         } else {
-            console.log("Product found", product);
+            console.log("Producto encontrado", product);
         }
     }
 
@@ -44,7 +44,7 @@ class ProductManager {
             await this.saveProductsToFile(products);
             console.log("Producto actualizado correctamente", products[index]);
         } else {
-            console.log(`Product not found, id: ${id}`);
+            console.log(`Producto no encontrado, id: ${id}`);
         }
     }     
  
@@ -60,13 +60,16 @@ class ProductManager {
         }
     }
 
-    async saveProductsToFile(products) {
+    async saveProductsToFile(path, products) {
         const content = JSON.stringify(products, null,"\t");
-        await fs.writeFile(this.path, content, "utf - 8");
+        await fs.writeFile(path, content, "utf - 8");
     }
-    creoID() {
-        return parseInt(Math.random() * 100000);
+    creoID(products) {
+        let id;
+        do {
+            id = Math.floor(Math.random() * 100000);
+        } while (products.find(p => p.id === id));
+        return id;
     }
 }
-
-module.exports = ProductManager;
+export default ProductManager;
