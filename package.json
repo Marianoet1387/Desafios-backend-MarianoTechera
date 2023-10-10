@@ -2,10 +2,11 @@
   "name": "entregable",
   "version": "1.0.0",
   "description": "servidor basado en express donde podamos hacer consultas al archivo de productos",
-  "main": "app.js",
-  "type": "commonjs",
+  "main": "src/app.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node .",
+    "dev":"nodemon."
   },
   "author": "Mariano Techera",
   "license": "ISC",
